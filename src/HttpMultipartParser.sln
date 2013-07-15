@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpMultipartParser", "HttpMultipartParser.csproj", "{89AA834A-52EB-4227-931E-4FB3DBF89808}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestService", "..\TestService\TestService.csproj", "{9EF645B6-C923-4EDC-AF8A-87FC499F5E6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{89AA834A-52EB-4227-931E-4FB3DBF89808}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89AA834A-52EB-4227-931E-4FB3DBF89808}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89AA834A-52EB-4227-931E-4FB3DBF89808}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EF645B6-C923-4EDC-AF8A-87FC499F5E6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EF645B6-C923-4EDC-AF8A-87FC499F5E6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EF645B6-C923-4EDC-AF8A-87FC499F5E6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EF645B6-C923-4EDC-AF8A-87FC499F5E6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

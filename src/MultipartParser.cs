@@ -223,6 +223,7 @@ namespace HttpTools.Util { //Feel free to change this if needed
 
                                 fileWaiting = file;
                                 yield return file;
+                                isFile = false;
                             }
 
                         } else { //Text data
@@ -242,6 +243,7 @@ namespace HttpTools.Util { //Feel free to change this if needed
 
                                 fileWaiting = file;
                                 yield return file;
+                                isFile = false;
 
                             } else { //Non-file or buffered file
 

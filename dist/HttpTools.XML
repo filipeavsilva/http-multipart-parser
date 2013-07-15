@@ -4,6 +4,89 @@
         <name>HttpTools</name>
     </assembly>
     <members>
+        <member name="T:HttpTools.Util.StreamedFileData">
+            <summary>
+            Represents a streamed file in a multipart request.
+            Contains methods to access the streamed file's data,
+            write it to a file or discard it.
+            </summary>
+        </member>
+        <member name="T:HttpTools.Util.MultipartData">
+            <summary>
+            One part of data in a multipart request's body.
+            </summary>
+        </member>
+        <member name="P:HttpTools.Util.MultipartData.Name">
+            <summary>
+            The part's name ("name" attribute of the form field) 
+            </summary>
+        </member>
+        <member name="P:HttpTools.Util.MultipartData.FileName">
+            <summary>
+            The original file name
+            (or null if it is not a file)
+            </summary>
+        </member>
+        <member name="P:HttpTools.Util.MultipartData.ContentType">
+            <summary>
+            The part's content type (e.g. "text/plain" or "application/octet-stream")
+            </summary>
+        </member>
+        <member name="P:HttpTools.Util.MultipartData.IsBinary">
+            <summary>
+            True if the part has a binary type, false otherwise
+            </summary>
+        </member>
+        <member name="P:HttpTools.Util.MultipartData.IsFile">
+            <summary>
+            True if the part is a file, false otherwise
+            </summary>
+        </member>
+        <member name="P:HttpTools.Util.StreamedFileData.ToFile">
+            <summary>
+            Delegate to write the file to disk
+            </summary>
+        </member>
+        <member name="P:HttpTools.Util.StreamedFileData.Discard">
+            <summary>
+            Delegate to discard the file
+            (simply advance the stream over it)
+            </summary>
+        </member>
+        <member name="P:HttpTools.Util.StreamedFileData.GetData">
+            <summary>
+            Delegate to obtain the file data in memory
+            </summary>
+            <returns>
+            If the file is binary (Binary == true), a byte[] with
+            the file contents. If not, returns a string.
+            </returns>
+        </member>
+        <member name="T:HttpTools.Util.EFileHandlingType">
+            <summary>
+            Controls how file data is handled by the parser
+            </summary>
+        </member>
+        <member name="F:HttpTools.Util.EFileHandlingType.ALL_STREAMED">
+            <summary>
+            All files are streamed
+            </summary>
+        </member>
+        <member name="F:HttpTools.Util.EFileHandlingType.ALL_BUFFERED">
+            <summary>
+            All files are buffered
+            </summary>
+        </member>
+        <member name="F:HttpTools.Util.EFileHandlingType.STREAMED_BINARY">
+            <summary>
+            Binary files are streamed, text files are buffered
+            </summary>
+        </member>
+        <member name="F:HttpTools.Util.EFileHandlingType.STREAMED_TEXT">
+            <summary>
+            Text files are streamed, binary files are buffered
+            </summary>
+        </member>
         <member name="T:HttpTools.Util.WriteMultiPartFile">
             <summary>
             Delegate for writing a file included in a multipart request
@@ -78,113 +161,6 @@
             Fields in the multipart data, indexed by field name
             </summary>
         </member>
-        <member name="T:HttpTools.Util.BinaryData">
-            <summary>
-            Represents a binary file in a multipart request
-            </summary>
-        </member>
-        <member name="T:HttpTools.Util.MultipartData">
-            <summary>
-            One part of data in a multipart request's body.
-            </summary>
-        </member>
-        <member name="P:HttpTools.Util.MultipartData.Name">
-            <summary>
-            The part's name ("name" attribute of the form field) 
-            </summary>
-        </member>
-        <member name="P:HttpTools.Util.MultipartData.FileName">
-            <summary>
-            The original file name
-            (or null if it is not a file)
-            </summary>
-        </member>
-        <member name="P:HttpTools.Util.MultipartData.ContentType">
-            <summary>
-            The part's content type (e.g. "text/plain" or "application/octet-stream")
-            </summary>
-        </member>
-        <member name="P:HttpTools.Util.MultipartData.IsBinary">
-            <summary>
-            True if the part has a binary type, false otherwise
-            </summary>
-        </member>
-        <member name="P:HttpTools.Util.MultipartData.IsFile">
-            <summary>
-            True if the part is a file, false otherwise
-            </summary>
-        </member>
-        <member name="M:HttpTools.Util.BinaryData.#ctor">
-            <summary>
-            </summary>
-        </member>
-        <member name="P:HttpTools.Util.BinaryData.Data">
-            <summary>
-            The binary data included in the file
-            </summary>
-        </member>
-        <member name="T:HttpTools.Util.EFileHandlingType">
-            <summary>
-            Controls how file data is handled by the parser
-            </summary>
-        </member>
-        <member name="F:HttpTools.Util.EFileHandlingType.ALL_STREAMED">
-            <summary>
-            All files are streamed
-            </summary>
-        </member>
-        <member name="F:HttpTools.Util.EFileHandlingType.ALL_BUFFERED">
-            <summary>
-            All files are buffered
-            </summary>
-        </member>
-        <member name="F:HttpTools.Util.EFileHandlingType.STREAMED_BINARY">
-            <summary>
-            Binary files are streamed, text files are buffered
-            </summary>
-        </member>
-        <member name="F:HttpTools.Util.EFileHandlingType.STREAMED_TEXT">
-            <summary>
-            Text files are streamed, binary files are buffered
-            </summary>
-        </member>
-        <member name="T:HttpTools.Util.StreamedFileData">
-            <summary>
-            Represents a streamed file in a multipart request.
-            Contains methods to access the streamed file's data,
-            write it to a file or discard it.
-            </summary>
-        </member>
-        <member name="P:HttpTools.Util.StreamedFileData.ToFile">
-            <summary>
-            Delegate to write the file to disk
-            </summary>
-        </member>
-        <member name="P:HttpTools.Util.StreamedFileData.Discard">
-            <summary>
-            Delegate to discard the file
-            (simply advance the stream over it)
-            </summary>
-        </member>
-        <member name="P:HttpTools.Util.StreamedFileData.GetData">
-            <summary>
-            Delegate to obtain the file data in memory
-            </summary>
-            <returns>
-            If the file is binary (Binary == true), a byte[] with
-            the file contents. If not, returns a string.
-            </returns>
-        </member>
-        <member name="T:HttpTools.Util.TextData">
-            <summary>
-            A textual part of a multipart request
-            </summary>
-        </member>
-        <member name="P:HttpTools.Util.TextData.Data">
-            <summary>
-            The part's data
-            </summary>
-        </member>
         <member name="T:HttpTools.Util.ContentTypes">
             <summary>
             Class to determine if data is binary or not from its media type
@@ -221,6 +197,30 @@
             </summary>
             <param name="type">The media type to check</param>
             <returns>true if the type is considered binary, false otherwise</returns>
+        </member>
+        <member name="T:HttpTools.Util.TextData">
+            <summary>
+            A textual part of a multipart request
+            </summary>
+        </member>
+        <member name="P:HttpTools.Util.TextData.Data">
+            <summary>
+            The part's data
+            </summary>
+        </member>
+        <member name="T:HttpTools.Util.BinaryData">
+            <summary>
+            Represents a binary file in a multipart request
+            </summary>
+        </member>
+        <member name="M:HttpTools.Util.BinaryData.#ctor">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:HttpTools.Util.BinaryData.Data">
+            <summary>
+            The binary data included in the file
+            </summary>
         </member>
     </members>
 </doc>
