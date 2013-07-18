@@ -71,7 +71,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\HttpMultipartParser.csproj">
+    <ProjectReference Include="..\HttpMultipartParser.csproj">
       <Project>{89AA834A-52EB-4227-931E-4FB3DBF89808}</Project>
       <Name>HttpMultipartParser</Name>
     </ProjectReference>

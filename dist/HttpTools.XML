@@ -154,7 +154,15 @@
             <returns>
             If any file type is set to be streamed, returns an IEnumerable of the streamed files.
             If no files are streamed, returns an empty IEnumerable.
+            The enumerable must be read to the end before all fields (not only files) are available
             </returns>
+        </member>
+        <member name="M:HttpTools.Util.HTTPMultipartParser.ParseToEnd">
+            <summary>
+            Parse the multipart request to the end and returns the resulting fields.
+            
+            If there are any streamed files, they will be saved to the Fields dictionary
+            </summary>
         </member>
         <member name="P:HttpTools.Util.HTTPMultipartParser.Fields">
             <summary>

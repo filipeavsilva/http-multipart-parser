@@ -121,14 +121,13 @@ namespace HttpTools.Util { //Feel free to change this if needed
             finishBytes = encoding.GetBytes("--");
         }
 
-        //If in any STREAMED mode, yields an object when a file (of the correct type) is found, nothing when it is finished
-        //If in buffered mode, collects every field into the Fields dictionary and 
         /// <summary>
         /// Parse the multipart request
         /// </summary>
         /// <returns>
         /// If any file type is set to be streamed, returns an IEnumerable of the streamed files.
         /// If no files are streamed, returns an empty IEnumerable.
+        /// The enumerable must be read to the end before all fields (not only files) are available
         /// </returns>
         public IEnumerable<StreamedFileData> Parse() {
             if (this.finished) //It's done!
@@ -138,6 +137,12 @@ namespace HttpTools.Util { //Feel free to change this if needed
                 // The first line should contain the delimiter
                 string terminator;
                 boundary = this.ReadLine(out terminator);
+
+                if (boundary.EndsWith("--")) { //For some reason the request came empty
+                    this.finished = true; //Stop parsing
+                    yield break;
+                }
+
                 boundaryBytes = encoding.GetBytes(terminator + boundary); //Include the line terminator in the boundary bytes,
                 // to avoid including it in any binary data
             }
@@ -251,7 +256,7 @@ namespace HttpTools.Util { //Feel free to change this if needed
                                     Fields.Add(name, new TextData {
                                         ContentType = contentType ?? "text/plain",
                                         Name = name,
-                                        Data = ReadTextFile()
+                                        Data = ReadTextFile(),
                                     });
                                 } else {
                                     Fields.Add(name, new TextData {
@@ -281,6 +286,18 @@ namespace HttpTools.Util { //Feel free to change this if needed
                 //Should it be an ArgumentException?
                 throw new ArgumentException("Stream is not a well-formed multipart string");
             }
+        }
+
+        /// <summary>
+        /// Parse the multipart request to the end and returns the resulting fields.
+        /// 
+        /// If there are any streamed files, they will be saved to the Fields dictionary
+        /// </summary>
+        public void ParseToEnd() {
+            foreach (var item in this.Parse()) {
+                //Do nothing, just read it
+            }
+            //All done!
         }
 
         //Reads a text file part into a string

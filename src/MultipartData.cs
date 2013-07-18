@@ -34,7 +34,7 @@ namespace HttpTools.Util {
         /// </summary>
         public bool IsFile {
             get {
-                return FileName == null;
+                return FileName != null;
             }
         }
     }

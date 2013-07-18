@@ -11,19 +11,44 @@ using System.ServiceModel.Web;
 namespace TestService {
     // NOTE: If you change the class name "Service1" here, you must also update the reference to "Service1" in Web.config and in the associated .svc file.
     public class Service1 : IService1 {
-        public Stream TestFileUpload(Stream body) {
-            HTTPMultipartParser parser = new HTTPMultipartParser(body, EFileHandlingType.ALL_STREAMED);
+        private Stream TestFileUpload(Stream body, HTTPMultipartParser parser) {
 
-            string a = "";
+            //This code was made for walking^Wstepping through...
+            /*string a = "";
             foreach (StreamedFileData fileData in parser.Parse()) {
                 if (fileData.IsBinary) {
                     byte[] x = (byte[])fileData.GetData();
                 } else {
                     a += fileData.Name + ": '" + (string)fileData.GetData() + "'";
                 }
-            }
+            }*/
+            parser.ParseToEnd();
 
             return null;
+        }
+
+        public Stream TestFileUpload_AllBuffered(Stream body) {
+            HTTPMultipartParser parser = new HTTPMultipartParser(body, EFileHandlingType.ALL_BUFFERED);
+
+            return TestFileUpload(body, parser);
+        }
+
+        public Stream TestFileUpload_AllStreamed(Stream body) {
+            HTTPMultipartParser parser = new HTTPMultipartParser(body, EFileHandlingType.ALL_STREAMED);
+
+            return TestFileUpload(body, parser);
+        }
+
+        public Stream TestFileUpload_StreamedBinary(Stream body) {
+            HTTPMultipartParser parser = new HTTPMultipartParser(body, EFileHandlingType.STREAMED_BINARY);
+
+            return TestFileUpload(body, parser);
+        }
+
+        public Stream TestFileUpload_StreamedText(Stream body) {
+            HTTPMultipartParser parser = new HTTPMultipartParser(body, EFileHandlingType.STREAMED_TEXT);
+
+            return TestFileUpload(body, parser);
         }
 
 
