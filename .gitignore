@@ -1,0 +1,5 @@
+*.suo
+*.user
+src/**/bin/*
+src/**/obj/*
+src/TestService/test_files

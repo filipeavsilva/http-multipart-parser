@@ -4,11 +4,9 @@
         <name>HttpTools</name>
     </assembly>
     <members>
-        <member name="T:HttpTools.Util.StreamedFileData">
+        <member name="T:HttpTools.Util.BinaryData">
             <summary>
-            Represents a streamed file in a multipart request.
-            Contains methods to access the streamed file's data,
-            write it to a file or discard it.
+            Represents a binary file in a multipart request
             </summary>
         </member>
         <member name="T:HttpTools.Util.MultipartData">
@@ -42,25 +40,51 @@
             True if the part is a file, false otherwise
             </summary>
         </member>
-        <member name="P:HttpTools.Util.StreamedFileData.ToFile">
+        <member name="M:HttpTools.Util.BinaryData.#ctor">
             <summary>
-            Delegate to write the file to disk
             </summary>
         </member>
-        <member name="P:HttpTools.Util.StreamedFileData.Discard">
+        <member name="P:HttpTools.Util.BinaryData.Data">
             <summary>
-            Delegate to discard the file
-            (simply advance the stream over it)
+            The binary data included in the file
             </summary>
         </member>
-        <member name="P:HttpTools.Util.StreamedFileData.GetData">
+        <member name="T:HttpTools.Util.ContentTypes">
             <summary>
-            Delegate to obtain the file data in memory
+            Class to determine if data is binary or not from its media type
             </summary>
-            <returns>
-            If the file is binary (Binary == true), a byte[] with
-            the file contents. If not, returns a string.
-            </returns>
+        </member>
+        <member name="F:HttpTools.Util.ContentTypes.binary">
+            <summary>
+            Types to be considered binary go here
+            </summary>
+        </member>
+        <member name="F:HttpTools.Util.ContentTypes.text">
+            <summary>
+            Types to be considered text go here
+            </summary>
+        </member>
+        <member name="F:HttpTools.Util.ContentTypes.defaultValue">
+            <summary>
+            The default value. true for binary, false for text.
+            </summary>
+        </member>
+        <member name="F:HttpTools.Util.ContentTypes.correspondence">
+            <summary>
+            Keeps the correspondence between types and their binary status
+            </summary>
+        </member>
+        <member name="M:HttpTools.Util.ContentTypes.#cctor">
+            <summary>
+            Prepare the dictionary from the two arrays
+            </summary>
+        </member>
+        <member name="M:HttpTools.Util.ContentTypes.IsBinary(System.String)">
+            <summary>
+            Determine if a given media type is or not binary
+            </summary>
+            <param name="type">The media type to check</param>
+            <returns>true if the type is considered binary, false otherwise</returns>
         </member>
         <member name="T:HttpTools.Util.EFileHandlingType">
             <summary>
@@ -169,42 +193,32 @@
             Fields in the multipart data, indexed by field name
             </summary>
         </member>
-        <member name="T:HttpTools.Util.ContentTypes">
+        <member name="T:HttpTools.Util.StreamedFileData">
             <summary>
-            Class to determine if data is binary or not from its media type
+            Represents a streamed file in a multipart request.
+            Contains methods to access the streamed file's data,
+            write it to a file or discard it.
             </summary>
         </member>
-        <member name="F:HttpTools.Util.ContentTypes.binary">
+        <member name="P:HttpTools.Util.StreamedFileData.ToFile">
             <summary>
-            Types to be considered binary go here
+            Delegate to write the file to disk
             </summary>
         </member>
-        <member name="F:HttpTools.Util.ContentTypes.text">
+        <member name="P:HttpTools.Util.StreamedFileData.Discard">
             <summary>
-            Types to be considered text go here
+            Delegate to discard the file
+            (simply advance the stream over it)
             </summary>
         </member>
-        <member name="F:HttpTools.Util.ContentTypes.defaultValue">
+        <member name="P:HttpTools.Util.StreamedFileData.GetData">
             <summary>
-            The default value. true for binary, false for text.
+            Delegate to obtain the file data in memory
             </summary>
-        </member>
-        <member name="F:HttpTools.Util.ContentTypes.correspondence">
-            <summary>
-            Keeps the correspondence between types and their binary status
-            </summary>
-        </member>
-        <member name="M:HttpTools.Util.ContentTypes.#cctor">
-            <summary>
-            Prepare the dictionary from the two arrays
-            </summary>
-        </member>
-        <member name="M:HttpTools.Util.ContentTypes.IsBinary(System.String)">
-            <summary>
-            Determine if a given media type is or not binary
-            </summary>
-            <param name="type">The media type to check</param>
-            <returns>true if the type is considered binary, false otherwise</returns>
+            <returns>
+            If the file is binary (Binary == true), a byte[] with
+            the file contents. If not, returns a string.
+            </returns>
         </member>
         <member name="T:HttpTools.Util.TextData">
             <summary>
@@ -214,20 +228,6 @@
         <member name="P:HttpTools.Util.TextData.Data">
             <summary>
             The part's data
-            </summary>
-        </member>
-        <member name="T:HttpTools.Util.BinaryData">
-            <summary>
-            Represents a binary file in a multipart request
-            </summary>
-        </member>
-        <member name="M:HttpTools.Util.BinaryData.#ctor">
-            <summary>
-            </summary>
-        </member>
-        <member name="P:HttpTools.Util.BinaryData.Data">
-            <summary>
-            The binary data included in the file
             </summary>
         </member>
     </members>
