@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace HttpTools.Util {
+namespace HttpMultipartParser.Data {
     /// <summary>
     /// Represents a binary file in a multipart request
     /// </summary>

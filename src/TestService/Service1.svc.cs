@@ -5,8 +5,9 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
 using System.IO;
-using HttpTools.Util;
+using HttpMultipartParser;
 using System.ServiceModel.Web;
+using HttpMultipartParser.Data;
 
 namespace TestService {
 	// NOTE: If you change the class name "Service1" here, you must also update the reference to "Service1" in Web.config and in the associated .svc file.

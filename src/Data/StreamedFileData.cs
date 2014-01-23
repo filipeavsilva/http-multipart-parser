@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace HttpTools.Util {
+namespace HttpMultipartParser.Data {
     /// <summary>
     /// Represents a streamed file in a multipart request.
     /// Contains methods to access the streamed file's data,

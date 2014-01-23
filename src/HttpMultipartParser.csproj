@@ -8,7 +8,7 @@
     <ProjectGuid>{89AA834A-52EB-4227-931E-4FB3DBF89808}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HttpTools.Util</RootNamespace>
+    <RootNamespace>HttpMultipartParser</RootNamespace>
     <AssemblyName>HttpTools</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -53,14 +53,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinaryData.cs" />
     <Compile Include="ContentTypes.cs" />
     <Compile Include="EFileHandlingType.cs" />
-    <Compile Include="MultipartData.cs" />
     <Compile Include="MultipartParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StreamedFileData.cs" />
-    <Compile Include="TextData.cs" />
+    <Compile Include="Data\BinaryData.cs" />
+    <Compile Include="Data\StreamedFileData.cs" />
+    <Compile Include="Data\TextData.cs" />
+    <Compile Include="Data\MultipartData.cs" />
+    <Compile Include="Decoding\IContentDecoder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -70,4 +71,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Data\" />
+    <Folder Include="Decoding\" />
+  </ItemGroup>
 </Project>

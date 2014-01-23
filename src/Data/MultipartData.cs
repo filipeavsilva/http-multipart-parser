@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace HttpTools.Util {
+namespace HttpMultipartParser.Data {
     /// <summary>
     /// One part of data in a multipart request's body.
     /// </summary>

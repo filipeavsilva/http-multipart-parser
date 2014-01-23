@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace HttpTools.Util {
+namespace HttpMultipartParser {
     /// <summary>
     /// Controls how file data is handled by the parser
     /// </summary>
