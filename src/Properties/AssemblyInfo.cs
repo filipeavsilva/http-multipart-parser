@@ -14,6 +14,9 @@ using System.Resources;
 [assembly: AssemblyCopyright("Copyright ©  2013 Filipe Silva")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+#if DEBUG
+[assembly:InternalsVisibleTo("TestHttpMultipartParser")]
+#endif
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

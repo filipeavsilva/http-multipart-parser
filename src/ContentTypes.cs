@@ -20,7 +20,7 @@ namespace HttpMultipartParser {
 		/// <summary>
 		/// Keeps the correspondence between types and their binary status
 		/// </summary>
-		private static readonly Dictionary<string, bool> correspondence = {
+		private static readonly Dictionary<string, bool> correspondence = new Dictionary<string, bool>{
 
 			//Binary types here
 			{ "application/octet-stream", true },

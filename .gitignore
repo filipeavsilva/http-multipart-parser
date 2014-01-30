@@ -1,5 +1,9 @@
 *.suo
 *.user
+*.userprefs
 src/**/bin/*
 src/**/obj/*
-src/TestService/test_files
+test/**/bin/*
+test/**/obj/*
+TestResult.xml
+src/packages
