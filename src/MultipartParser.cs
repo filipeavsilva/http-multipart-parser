@@ -178,7 +178,7 @@ namespace HttpTools.Util { //Feel free to change this if needed
 				string line = this.ReadLine();
 				while (!this.finished && line != null) {
 					if (line.StartsWith("Content-Disposition")) { //Field name and data name
-						Regex nameRe = new Regex(@"name=""(.*?)""");
+						Regex nameRe = new Regex(@"\Wname=""(.*?)""");
 						Match nameMatch = nameRe.Match(line);
 						if (nameMatch.Success) {
 							name = nameMatch.Groups[1].Value;
