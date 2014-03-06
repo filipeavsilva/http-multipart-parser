@@ -152,6 +152,7 @@ namespace HttpTools.Util { //Feel free to change this if needed
 				string name = null;
 				string filename = null;
 				string contentType = null;
+			    string transferEncoding = null;
 				bool isBinary = false;
 				bool isFile = false;
 
@@ -160,14 +161,16 @@ namespace HttpTools.Util { //Feel free to change this if needed
 						Fields.Add(fileWaiting.Name, new BinaryData {
 							ContentType = fileWaiting.ContentType,
 							Name = fileWaiting.Name,
-							FileName = fileWaiting.FileName,
+                            FileName = fileWaiting.FileName,
+                            ContentTransferEncoding = transferEncoding,
 							Data = (byte[])fileWaiting.GetData()
 						});
 					} else {
 						Fields.Add(fileWaiting.Name, new TextData {
 							ContentType = fileWaiting.ContentType,
 							Name = fileWaiting.Name,
-							FileName = fileWaiting.FileName,
+                            FileName = fileWaiting.FileName,
+                            ContentTransferEncoding = transferEncoding,
 							Data = (string)fileWaiting.GetData()
 						});
 					}
@@ -195,6 +198,9 @@ namespace HttpTools.Util { //Feel free to change this if needed
 						contentType = line.Remove(0, 14).Trim(); //Removes 'Content-Type: '(14 chars) (and trims just in case)
 						isBinary = ContentTypes.IsBinary(contentType); //Checks if it is binary data
 
+					} else if (line.StartsWith("Content-Transfer-Encoding")){
+					    transferEncoding = line.Remove(0, "Content-Transfer-Encoding: ".Length).Trim();
+
 					} else if (line == string.Empty) { //Data begins
 						if (isBinary) { //Binary data, always file
 							if (this.parseType == EFileHandlingType.ALL_BUFFERED ||
@@ -203,20 +209,23 @@ namespace HttpTools.Util { //Feel free to change this if needed
 								Fields.Add(name, new BinaryData {
 									ContentType = contentType ?? "application/octet-stream",
 									Name = name,
-									FileName = filename,
-									Data = ReadBinaryFile()
+                                    FileName = filename,
+                                    ContentTransferEncoding = transferEncoding,
+									Data = ReadBinaryFile(transferEncoding)
 								});
 
 							} else { //Stream it
+							    var tfer = transferEncoding;
 								StreamedFileData file = new StreamedFileData {
 									Name = name,
 									ContentType = contentType ?? "application/octet-stream",
 									IsBinary = true,
 									FileName = filename,
+                                    ContentTransferEncoding = transferEncoding,
 
 									ToFile = WriteBinaryStreamToFile,
 									Discard = DiscardBinaryFile,
-									GetData = ReadBinaryFile
+									GetData = () => ReadBinaryFile(tfer)
 								};
 
 								fileWaiting = file;
@@ -228,15 +237,18 @@ namespace HttpTools.Util { //Feel free to change this if needed
 							if (isFile &&
 									(this.parseType == EFileHandlingType.ALL_STREAMED ||
 									this.parseType == EFileHandlingType.STREAMED_TEXT)) { //Stream it
+
+							    var tfer = transferEncoding;
 								StreamedFileData file = new StreamedFileData {
 									Name = name,
 									ContentType = contentType ?? "text/plain",
 									IsBinary = false,
-									FileName = filename,
+                                    FileName = filename,
+                                    ContentTransferEncoding = transferEncoding,
 
 									ToFile = WriteTextStreamToFile,
 									Discard = DiscardTextFile,
-									GetData = ReadTextFile
+									GetData = () => ReadTextFile(tfer)
 								};
 
 								fileWaiting = file;
@@ -249,14 +261,16 @@ namespace HttpTools.Util { //Feel free to change this if needed
 									Fields.Add(name, new TextData {
 										ContentType = contentType ?? "text/plain",
 										Name = name,
-										Data = ReadTextFile(),
+                                        Data = ReadTextFile(transferEncoding),
+                                        ContentTransferEncoding = transferEncoding
 									});
 								} else {
 									Fields.Add(name, new TextData {
 										ContentType = contentType ?? "text/plain",
 										Name = name,
 										FileName = filename,
-										Data = ReadTextFile()
+                                        Data = ReadTextFile(transferEncoding),
+                                        ContentTransferEncoding = transferEncoding
 									});
 								}
 
@@ -268,6 +282,7 @@ namespace HttpTools.Util { //Feel free to change this if needed
 						contentType = null;
 						isBinary = false;
 						isFile = false;
+					    transferEncoding = null;
 					}
 
 					//Keep on readin'
@@ -294,7 +309,7 @@ namespace HttpTools.Util { //Feel free to change this if needed
 		}
 
 		//Reads a text file part into a string
-		private string ReadTextFile () {
+		private string ReadTextFile (string transferEncoding = null) {
 			StringBuilder data = new StringBuilder();
 			string line = this.ReadLine();
 
@@ -309,7 +324,26 @@ namespace HttpTools.Util { //Feel free to change this if needed
 			}
 
 			data.Remove(0, 2); //Remove the first \r\n
-			return data.ToString();
+
+		    var content = (string) null;
+		    if (transferEncoding != null)
+            {
+                switch (transferEncoding.ToLowerInvariant())
+                {
+                    case "base64":
+                        content = encoding.GetString(Convert.FromBase64String(data.ToString()));
+                        break;
+                    default:
+                        throw new NotSupportedException("Not supported: Content-Transfer-Encoding: " + transferEncoding);
+                }
+		        
+		    }
+		    else
+		    {
+		        content = data.ToString();
+		    }
+
+            return content;
 		}
 
 		//Reads a text file but ignores it
@@ -364,16 +398,33 @@ namespace HttpTools.Util { //Feel free to change this if needed
 		}
 
 		//Reads a binary file part into a byte array
-		private byte[] ReadBinaryFile () {
-			MemoryStream ms = new MemoryStream();
+		private byte[] ReadBinaryFile (string transferEncoding = null)
+		{
+		    byte[] result = null;
+		    if (transferEncoding != null)
+		    {
+		        switch (transferEncoding.ToLowerInvariant())
+		        {
+                    default:
+                        throw new NotSupportedException("Not supported: Content-Transfer-Encoding: " + transferEncoding);
+                    case "base64":
+		                result = Convert.FromBase64String(ReadTextFile());
+		                break;
+		        }
+		    }
+		    else
+            {
+                MemoryStream ms = new MemoryStream();
 
-			long numBytes = BinaryDataToStream(ms);
+                long numBytes = BinaryDataToStream(ms);
 
-			//Finally, return the bytes
-			byte[] result = new byte[numBytes];
-			ms.Position = 0;
-			ms.Read(result, 0, (int)numBytes);
-			return result;
+                //Finally, return the bytes
+                result = new byte[numBytes];
+                ms.Position = 0;
+                ms.Read(result, 0, (int)numBytes);
+		    }
+
+		    return result;
 		}
 
 		//Prepares the partial search table for the KMP algorithm
