@@ -54,8 +54,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentTypes.cs" />
+    <Compile Include="Defaults.cs" />
     <Compile Include="EFileHandlingType.cs" />
+    <Compile Include="Header.cs" />
     <Compile Include="MultipartParser.cs" />
+    <Compile Include="Parsing\HeaderParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\BinaryData.cs" />
     <Compile Include="Data\StreamedFileData.cs" />
@@ -72,8 +75,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="Data\" />
-    <Folder Include="Decoding\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

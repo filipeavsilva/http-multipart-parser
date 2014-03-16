@@ -1,14 +1,14 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using NUnit.Framework;
 using System.IO;
 using System.Text;
 
 namespace TestHttpMultipartParser {
-	[TestFixture]
+	[TestClass]
 	public class TestBufferedStream {
 
-		[TestCase]
-		public void TestReadLine(){
+		[TestMethod]
+		public void lines_with_multiple_line_endings_are_read_correctly(){
 			//Test reading lines from a stream, with multiple line endings
 			var ms_r = new MemoryStream(Encoding.UTF8.GetBytes("FirstLine\rSecondLine"));
 			var ms_n = new MemoryStream(Encoding.UTF8.GetBytes("FirstLine\nSecondLine"));
@@ -33,8 +33,8 @@ namespace TestHttpMultipartParser {
 			Assert.AreEqual ("SecondLine", bs_rn.ReadLine ());
 		}
 
-		[TestCase]
-		public void TestReadLineEmpty(){
+		[TestMethod]
+		public void reading_line_from_empty_stream_returns_empty_string(){
 			//Test reading lines from an empty stream
 			var ms = new MemoryStream();
 
@@ -43,21 +43,21 @@ namespace TestHttpMultipartParser {
 			Assert.AreEqual(string.Empty, bs.ReadLine ());
 		}
 
-		[TestCase]
-		public void TestReadByte(){
+		[TestMethod]
+		public void bytes_are_read_correctly(){
 			//Test reading bytes from a stream
 			var ms = new MemoryStream(new byte[]{10, 25, 32});
 
 			var bs = new HttpMultipartParser.BufferedStream (ms);
 
-			Assert.AreEqual (10, bs.ReadByte());
-			Assert.AreEqual (25, bs.ReadByte());
-			Assert.AreEqual (32, bs.ReadByte());
+			Assert.AreEqual ((byte)10, bs.ReadByte());
+			Assert.AreEqual ((byte)25, bs.ReadByte());
+			Assert.AreEqual ((byte)32, bs.ReadByte());
 			Assert.IsNull(bs.ReadByte());
 		}
 
-		[TestCase]
-		public void TestReadByteEmpty(){
+		[TestMethod]
+		public void reading_bytes_from_empty_stream_returns_null(){
 			//Test reading bytes from an empty stream
 			var ms = new MemoryStream();
 
@@ -66,21 +66,21 @@ namespace TestHttpMultipartParser {
 			Assert.IsNull (bs.ReadByte());
 		}
 
-		[TestCase]
-		public void TestReadIfNext(){
+		[TestMethod]
+		public void read_if_next_reads_only_if_match_is_found(){
 			//Test reading matching byte sequences at the start of a stream
 			var ms = new MemoryStream(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12});
 
 			var bs = new HttpMultipartParser.BufferedStream (ms);
 
 			Assert.IsNull (bs.ReadIfNext(new byte[][]{new byte[]{6, 6, 6}, new byte[]{3, 2, 1}})); //Doesn't match
-			Assert.AreEqual (new byte[]{1, 2, 3}, bs.ReadIfNext(new byte[][]{new byte[]{7, 8, 9}, new byte[]{1, 2, 3}, new byte[]{1, 2}})); //Matches the first available match, even if longer
-			Assert.AreEqual (4, bs.ReadByte()); //Actually read the sequence
-			Assert.AreEqual (new byte[]{5, 6, 7}, bs.ReadIfNext(new byte[][]{new byte[]{5, 6, 7}, new byte[]{5, 6, 7, 8}})); //Matches the first available match, even if shorter
+			CollectionAssert.AreEqual (new byte[]{1, 2, 3}, bs.ReadIfNext(new byte[][]{new byte[]{7, 8, 9}, new byte[]{1, 2, 3}, new byte[]{1, 2}})); //Matches the first available match, even if longer
+			Assert.AreEqual((byte)4, bs.ReadByte()); //It did actually read the sequence
+			CollectionAssert.AreEqual (new byte[]{5, 6, 7}, bs.ReadIfNext(new byte[][]{new byte[]{5, 6, 7}, new byte[]{5, 6, 7, 8}})); //Matches the first available match, even if shorter
 		}
 
-		[TestCase]
-		public void TestReadIfNextEmpty(){
+		[TestMethod]
+		public void read_if_next_from_empty_string_returns_null(){
 			//Test reading matching byte sequences at the start of an empty stream
 			var ms = new MemoryStream();
 

@@ -13,7 +13,7 @@ namespace HttpMultipartParser {
 		private readonly Stream _stream;
 		private readonly static int BUF_LEN = 4096;
 		private readonly byte[] buffer = new byte[BUF_LEN];
-		private readonly Encoding _encoding = Encoding.UTF8;
+        private readonly Encoding _encoding = Defaults.ENCODING;
 		//Byte arrays to keep line endings
 		private byte[] CRbytes;
 		private byte[] LFbytes;

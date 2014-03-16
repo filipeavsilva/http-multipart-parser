@@ -61,7 +61,7 @@ namespace HttpMultipartParser {
 		}
 
 		private readonly IDictionary<string, string> _headers;
-		private readonly Encoding _encoding = Encoding.UTF8;
+        private readonly Encoding _encoding = Defaults.ENCODING;
 		private readonly EFileHandlingType _parseType = EFileHandlingType.ALL_BUFFERED; //Defaults to buffering everything
 		private readonly BufferedStream _stream;
 		private string _boundary = null;
