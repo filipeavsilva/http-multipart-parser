@@ -12,22 +12,29 @@ namespace HttpMultipartParser
 	/// to a file on disk
 	/// </summary>
 	/// <param name="filePath">The path where to write the file</param>
-	public delegate void WriteMultiPartFile (string filePath);
+	public delegate void WritePartToFile (string filePath);
 
 	/// <summary>
-	/// Delegate for obtaining the data of a file included in a
+	/// Delegate for obtaining text data from a streamed part of a
 	/// multipart request
 	/// </summary>
 	/// <returns>
-	/// The file's data.
-	/// <i>string</i> if it is a text file,
-	/// <i>byte[]</i> otherwise.
+	/// The text included in the part
 	/// </returns>
-	public delegate object GetFileData ();
+	public delegate string GetTextData ();
+
+    /// <summary>
+    /// Delegate for obtaining binary data from a streamed part of a
+    /// multipart request
+    /// </summary>
+    /// <returns>
+    /// The bytes included in the part
+    /// </returns>
+    public delegate string GetBinaryData ();
 
 	/// <summary>
-	/// Delegate for discarding a file included in a multipart request.
-	/// Reads the request stream until the end of the file.
+	/// Delegate for discarding a part of a streamed multipart request.
+	/// Reads the request stream until the end of the part.
 	/// </summary>
-	public delegate void DiscardFile ();
+	public delegate void DiscardPart ();
 }

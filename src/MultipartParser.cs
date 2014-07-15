@@ -43,7 +43,7 @@ namespace HttpMultipartParser {
 		private string _boundary = null;
 		private byte[] _boundaryBytes = null;
 		private readonly byte[] _finishBytes; //Bytes indicating the end of the stream.
-		private StreamedFileData _fileWaiting = null; //The last unread streamed file returned. Null if it was already read.
+		private StreamedData _fileWaiting = null; //The last unread streamed file returned. Null if it was already read.
 		private bool _finished = false; //true if the stream has been parsed completely.
 		private byte[] _terminatorBytes;
 
@@ -94,7 +94,7 @@ namespace HttpMultipartParser {
 		/// If no files are streamed, returns an empty IEnumerable.
 		/// The enumerable must be read to the end before all fields (not only files) are available
 		/// </returns>
-		public IEnumerable<StreamedFileData> Parse () {
+		public IEnumerable<StreamedData> Parse () {
 			if (this._finished) //It's done!
 				yield break;
 
@@ -131,11 +131,11 @@ namespace HttpMultipartParser {
 							Data = (byte[])_fileWaiting.GetData()
 						});
 					} else {
-						Fields.Add(_fileWaiting.Name, new TextData {
+						Fields.Add(_fileWaiting.Name, new BufferedData {
 							ContentType = _fileWaiting.ContentType,
 							Name = _fileWaiting.Name,
 							FileName = _fileWaiting.FileName,
-							Data = (string)_fileWaiting.GetData()
+							Text = (string)_fileWaiting.GetData()
 						});
 					}
 
@@ -175,14 +175,14 @@ namespace HttpMultipartParser {
 								});
 
 							} else { //Stream it
-								StreamedFileData file = new StreamedFileData {
+								StreamedData file = new StreamedData {
 									Name = name,
 									ContentType = contentType ?? "application/octet-stream",
 									IsBinary = true,
 									FileName = filename,
 
 									ToFile = WriteBinaryStreamToFile,
-									Discard = DiscardBinaryFile,
+									Skip = DiscardBinaryFile,
 									GetData = ReadBinaryFile
 								};
 
@@ -195,14 +195,14 @@ namespace HttpMultipartParser {
 							if (isFile &&
 									(this._parseType == EFileHandlingType.ALL_STREAMED ||
 									this._parseType == EFileHandlingType.STREAMED_TEXT)) { //Stream it
-								StreamedFileData file = new StreamedFileData {
+								StreamedData file = new StreamedData {
 									Name = name,
 									ContentType = contentType ?? "text/plain",
 									IsBinary = false,
 									FileName = filename,
 
 									ToFile = WriteTextStreamToFile,
-									Discard = DiscardTextFile,
+									Skip = DiscardTextFile,
 									GetData = ReadTextFile
 								};
 
@@ -213,17 +213,17 @@ namespace HttpMultipartParser {
 							} else { //Non-file or buffered file
 
 								if (filename == null) {
-									Fields.Add(name, new TextData {
+									Fields.Add(name, new BufferedData {
 										ContentType = contentType ?? "text/plain",
 										Name = name,
-										Data = ReadTextFile(),
+										Text = ReadTextFile(),
 									});
 								} else {
-									Fields.Add(name, new TextData {
+									Fields.Add(name, new BufferedData {
 										ContentType = contentType ?? "text/plain",
 										Name = name,
 										FileName = filename,
-										Data = ReadTextFile()
+										Text = ReadTextFile()
 									});
 								}
 

@@ -11,14 +11,14 @@ namespace HttpMultipartParser.Decoding
     /// </summary>
     internal class NoEncodingContentDecoder : IContentDecoder
     {
-        private Func<BufferedStream, WriteMultiPartFile> _genWriteMultipartFileDelegateFunc;
+        private Func<BufferedStream, WriteFilePart> _genWriteMultipartFileDelegateFunc;
         private Func<BufferedStream, GetFileData> _genGetFileDataFunc;
-        private Func<BufferedStream, DiscardFile> _genDiscardFileDelegateFunc;
+        private Func<BufferedStream, DiscardPart> _genDiscardFileDelegateFunc;
         private Encoding _encoding;
 
-        public NoEncodingContentDecoder(Func<BufferedStream, WriteMultiPartFile> genWriteMultipartFileDelegateFunc,
+        public NoEncodingContentDecoder(Func<BufferedStream, WriteFilePart> genWriteMultipartFileDelegateFunc,
                                         Func<BufferedStream, GetFileData> genGetFileDataDelegateFunc,
-                                        Func<BufferedStream, DiscardFile> genDiscardFileDelegateFunc,
+                                        Func<BufferedStream, DiscardPart> genDiscardFileDelegateFunc,
                                         Encoding encoding)
         {
             _genWriteMultipartFileDelegateFunc = genWriteMultipartFileDelegateFunc;
@@ -36,24 +36,24 @@ namespace HttpMultipartParser.Decoding
             };
         }
 
-        public Data.TextData DecodePart(string content, string contentType)
+        public Data.BufferedData DecodePart(string content, string contentType)
         {
-            return new Data.TextData
+            return new Data.BufferedData
             {
                 ContentType = contentType,
-                Data = content
+                Text = content
             };
         }
 
-        public Data.StreamedFileData DecodeAndStreamPart(BufferedStream content, string contentType)
+        public Data.StreamedData DecodeAndStreamPart(BufferedStream content, string contentType)
         {
-            return new Data.StreamedFileData
+            return new Data.StreamedData
             {
                 ContentType = contentType,
                 IsBinary = ContentTypes.IsBinary(contentType),
                 ToFile = _genWriteMultipartFileDelegateFunc(content),
                 GetData = _genGetFileDataFunc(content),
-                Discard = _genDiscardFileDelegateFunc(content)
+                Skip = _genDiscardFileDelegateFunc(content)
             };
         }
     }

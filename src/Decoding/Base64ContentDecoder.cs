@@ -7,14 +7,14 @@ namespace HttpMultipartParser.Decoding
 {
     internal class Base64ContentDecoder : IContentDecoder
     {
-        private Func<BufferedStream, WriteMultiPartFile> _genWriteMultipartFileDelegateFunc;
+        private Func<BufferedStream, WriteFilePart> _genWriteMultipartFileDelegateFunc;
         private Func<BufferedStream, GetFileData> _genGetFileDataFunc;
-        private Func<BufferedStream, DiscardFile> _genDiscardFileDelegateFunc;
+        private Func<BufferedStream, DiscardPart> _genDiscardFileDelegateFunc;
         private Encoding _encoding;
 
-        public Base64ContentDecoder(Func<BufferedStream, WriteMultiPartFile> genWriteMultipartFileDelegateFunc,
+        public Base64ContentDecoder(Func<BufferedStream, WriteFilePart> genWriteMultipartFileDelegateFunc,
                                     Func<BufferedStream, GetFileData> genGetFileDataDelegateFunc,
-                                    Func<BufferedStream, DiscardFile> genDiscardFileDelegateFunc,
+                                    Func<BufferedStream, DiscardPart> genDiscardFileDelegateFunc,
                                     Encoding encoding)
         {
             _genWriteMultipartFileDelegateFunc = genWriteMultipartFileDelegateFunc;
@@ -34,18 +34,18 @@ namespace HttpMultipartParser.Decoding
             };
         }
 
-        public Data.TextData DecodePart(string content, string contentType)
+        public Data.BufferedData DecodePart(string content, string contentType)
         {
             byte[] bytes = Convert.FromBase64String(content);
 
-            return new Data.TextData
+            return new Data.BufferedData
             {
-                Data = _encoding.GetString(bytes),
+                Text = _encoding.GetString(bytes),
                 ContentType = contentType
             };
         }
 
-        public Data.StreamedFileData DecodeAndStreamPart(BufferedStream content, string contentType)
+        public Data.StreamedData DecodeAndStreamPart(BufferedStream content, string contentType)
         {
             //Streamed base64?
             throw new NotImplementedException();
