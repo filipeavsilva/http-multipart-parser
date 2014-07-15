@@ -7,3 +7,4 @@ test/**/bin/*
 test/**/obj/*
 TestResult.xml
 src/packages
+src/HttpMultipartParser.userprefs src/Partsley.userprefs

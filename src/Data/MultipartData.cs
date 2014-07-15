@@ -7,7 +7,7 @@ namespace HttpMultipartParser.Data {
     /// <summary>
     /// One part of data in a multipart request's body.
     /// </summary>
-    public class MultipartData {
+    public abstract class MultipartData {
         /// <summary>
         /// The part's name ("name" attribute of the form field) 
         /// </summary>
@@ -34,7 +34,7 @@ namespace HttpMultipartParser.Data {
         /// </summary>
         public bool IsFile {
             get {
-                return FileName != null;
+                return !string.IsNullOrEmpty(FileName);
             }
         }
     }
