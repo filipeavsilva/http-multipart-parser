@@ -9,7 +9,7 @@ namespace HttpMultipartParser.Data {
     /// Contains methods to access the part's data,
     /// write it to a file or discard it.
     /// </summary>
-    public class StreamedFileData : MultipartData {
+    public class StreamedData : MultipartData {
         /// <summary>
         /// Delegate to write the part's data into a file in disk
         /// </summary>
