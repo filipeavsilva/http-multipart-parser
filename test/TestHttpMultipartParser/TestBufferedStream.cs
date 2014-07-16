@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text;
 using NUnit.Framework;
+using FluentAssertions;
 
 namespace TestHttpMultipartParser {
     [TestFixture]
@@ -18,18 +19,18 @@ namespace TestHttpMultipartParser {
 			var bs_rn = new HttpMultipartParser.BufferedStream (ms_rn, Encoding.UTF8);
 
 			string terminator;
-            Assert.AreEqual("FirstLine", bs_r.ReadLine (out terminator));
-			Assert.AreEqual ("\r", terminator);
-			Assert.AreEqual ("SecondLine", bs_r.ReadLine (out terminator));
-			Assert.AreEqual (null, terminator);
+            bs_r.ReadLine(out terminator).Should().Be("FirstLine");
+			terminator.Should().Be("\r");
+			bs_r.ReadLine (out terminator).Should().Be("SecondLine");
+			terminator.Should().Be(null);
 
-			Assert.AreEqual ("FirstLine", bs_n.ReadLine (out terminator));
-			Assert.AreEqual ("\n", terminator);
-			Assert.AreEqual ("SecondLine", bs_n.ReadLine ());
+			bs_n.ReadLine (out terminator).Should().Be("FirstLine");
+			terminator.Should().Be("\n");
+			bs_n.ReadLine ().Should().Be("SecondLine");
 
-			Assert.AreEqual ("FirstLine", bs_rn.ReadLine (out terminator));
-			Assert.AreEqual ("\r\n", terminator);
-			Assert.AreEqual ("SecondLine", bs_rn.ReadLine ());
+			bs_rn.ReadLine (out terminator).Should().Be("FirstLine");
+			terminator.Should().Be("\r\n");
+			bs_rn.ReadLine ().Should().Be("SecondLine");
 		}
 
         [TestCase]
@@ -39,7 +40,7 @@ namespace TestHttpMultipartParser {
 
 			var bs = new HttpMultipartParser.BufferedStream (ms);
 
-			Assert.AreEqual(string.Empty, bs.ReadLine ());
+			bs.ReadLine().Should().Be(string.Empty);
 		}
 
 		[TestCase]
@@ -49,10 +50,11 @@ namespace TestHttpMultipartParser {
 
 			var bs = new HttpMultipartParser.BufferedStream (ms);
 
-			Assert.AreEqual ((byte)10, bs.ReadByte());
-			Assert.AreEqual ((byte)25, bs.ReadByte());
-			Assert.AreEqual ((byte)32, bs.ReadByte());
-			Assert.Null(bs.ReadByte());
+			bs.ReadByte().Should().Be((byte)10);
+			bs.ReadByte().Should().Be((byte)25);
+			bs.ReadByte().Should().Be((byte)32);
+            bs.ReadByte().Should().Be(null);
+
 		}
 
 		[TestCase]
@@ -62,7 +64,7 @@ namespace TestHttpMultipartParser {
 
 			var bs = new HttpMultipartParser.BufferedStream (ms);
 
-			Assert.Null(bs.ReadByte());
+            bs.ReadByte().Should().Be(null);
 		}
 
 		[TestCase]
@@ -72,10 +74,10 @@ namespace TestHttpMultipartParser {
 
 			var bs = new HttpMultipartParser.BufferedStream (ms);
 
-			Assert.Null(bs.ReadIfNext(new byte[][]{new byte[]{6, 6, 6}, new byte[]{3, 2, 1}})); //Doesn't match
-			CollectionAssert.AreEqual (new byte[]{1, 2, 3}, bs.ReadIfNext(new byte[][]{new byte[]{7, 8, 9}, new byte[]{1, 2, 3}, new byte[]{1, 2}})); //Matches the first available match, even if longer
-			Assert.AreEqual((byte)4, bs.ReadByte()); //It did actually read the sequence
-			CollectionAssert.AreEqual (new byte[]{5, 6, 7}, bs.ReadIfNext(new byte[][]{new byte[]{5, 6, 7}, new byte[]{5, 6, 7, 8}})); //Matches the first available match, even if shorter
+            bs.ReadIfNext(new byte[][]{new byte[]{6, 6, 6}, new byte[]{3, 2, 1}}).Should().BeNull(); //Doesn't match
+            bs.ReadIfNext(new byte[][]{new byte[]{7, 8, 9}, new byte[]{1, 2, 3}, new byte[]{1, 2}}).Should().BeEquivalentTo(new byte[]{1, 2, 3}); //Matches the first available match, even if longer
+			bs.ReadByte().Should().Be((byte)4); //It did actually read the sequence
+            bs.ReadIfNext(new byte[][]{ new byte[]{ 5, 6, 7 }, new byte[]{ 5, 6, 7, 8 } }).Should().BeEquivalentTo(new byte[] { 5, 6, 7 }); //Matches the first available match, even if shorter
 		}
 
 		[TestCase]
@@ -85,7 +87,7 @@ namespace TestHttpMultipartParser {
 
 			var bs = new HttpMultipartParser.BufferedStream (ms);
 
-			Assert.Null(bs.ReadIfNext(new byte[][]{new byte[]{6, 6, 6}, new byte[]{3, 2, 1}}));
+            bs.ReadIfNext(new byte[][]{ new byte[]{ 6, 6, 6 }, new byte[]{ 3, 2, 1 } }).Should().BeNull();
 		}
 
 	}
