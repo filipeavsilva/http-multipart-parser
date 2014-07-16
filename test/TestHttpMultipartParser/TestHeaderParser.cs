@@ -1,17 +1,16 @@
 ﻿using HttpMultipartParser.Parsing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
+using NUnit.Framework;
 
 namespace TestHttpMultipartParser
 {
-    [TestClass]
+    [TestFixture]
     public class TestHeaderParser
     {
-        [TestMethod]
+        [TestCase]
         public void valid_headers_from_stream_and_encoding_parsed_correctly_and_dictionary_keys_are_case_insensitive()
         {
             var headers = new StringBuilder().Append("User-Agent: user_agent").AppendLine()
@@ -32,7 +31,7 @@ namespace TestHttpMultipartParser
             Assert.AreEqual("------abcde", parsed["content-type"].Parameters["BounDarY"]);
         }
 
-        [TestMethod]
+        [TestCase]
         public void invalid_lines_from_stream_are_ignored()
         {
             var headers = new StringBuilder().Append("User-Agent=user_agent").AppendLine()
@@ -46,7 +45,7 @@ namespace TestHttpMultipartParser
             Assert.AreEqual(0, parsed.Count);
         }
 
-        [TestMethod]
+        [TestCase]
         public void valid_headers_from_stream_with_default_encoding_parsed_correctly_and_dictionary_keys_are_case_insensitive()
         {
             var headers = new StringBuilder().Append("User-Agent: user_agent").AppendLine()
@@ -67,7 +66,7 @@ namespace TestHttpMultipartParser
             Assert.AreEqual("------abcde", parsed["content-type"].Parameters["BounDarY"]);
         }
 
-        [TestMethod]
+        [TestCase]
         public void repeated_headers_use_the_value_of_the_last_one()
         {
             var headers = new StringBuilder().Append("User-Agent: user_agent").AppendLine()
@@ -81,7 +80,7 @@ namespace TestHttpMultipartParser
             Assert.AreEqual("user_agent_2", parsed["user-agent"].Value);
         }
 
-        [TestMethod]
+        [TestCase]
         public void headers_with_multiple_parameters_are_read_correctly_and_dictionary_keys_are_case_sensitive()
         {
             var headers = new StringBuilder().Append("X-Custom-Header: abcde; custom-prop1=12345; custom_prop2=xpto;      custom--prop3   =   666;").AppendLine()
@@ -97,7 +96,7 @@ namespace TestHttpMultipartParser
             Assert.AreEqual("666", parameters["custom--Prop3"]);
         }
 
-        [TestMethod]
+        [TestCase]
         public void repeated_parameters_use_the_value_of_the_last_one()
         {
             var headers = new StringBuilder().Append("X-Custom-Header: abcde; custom-prop1=12345; custom-prop1=xpto").AppendLine()
