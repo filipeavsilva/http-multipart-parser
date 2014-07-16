@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using HttpMultipartParser.Data;
 
 namespace HttpMultipartParser.Decoding
 {
@@ -11,37 +12,42 @@ namespace HttpMultipartParser.Decoding
     /// </summary>
     internal class NoEncodingContentDecoder : IContentDecoder
     {
-        private Func<BufferedStream, WriteFilePart> _genWriteMultipartFileDelegateFunc;
-        private Func<BufferedStream, GetFileData> _genGetFileDataFunc;
-        private Func<BufferedStream, DiscardPart> _genDiscardFileDelegateFunc;
+        private readonly Func<BufferedStream, WritePartToFile> _genWritePartToFileDelegateFunc;
+        private readonly Func<BufferedStream, GetTextData> _genGetTextDataDelegateFunc;
+        private readonly Func<BufferedStream, GetBinaryData> _genGetBinaryDataDelegateFunc;
+        private readonly Func<BufferedStream, DiscardPart> _genDiscardPartDelegateFunc;
         private Encoding _encoding;
 
-        public NoEncodingContentDecoder(Func<BufferedStream, WriteFilePart> genWriteMultipartFileDelegateFunc,
-                                        Func<BufferedStream, GetFileData> genGetFileDataDelegateFunc,
-                                        Func<BufferedStream, DiscardPart> genDiscardFileDelegateFunc,
+        public NoEncodingContentDecoder(Func<BufferedStream, WritePartToFile> genWriteMultipartFileDelegateFunc,
+                                        Func<BufferedStream, GetTextData> genGetTextDataDelegateFunc,
+                                        Func<BufferedStream, GetBinaryData> genGetBinaryDataDelegateFunc,
+                                        Func<BufferedStream, DiscardPart> genDiscardPartDelegateFunc,
                                         Encoding encoding)
         {
-            _genWriteMultipartFileDelegateFunc = genWriteMultipartFileDelegateFunc;
-            _genGetFileDataFunc = genGetFileDataDelegateFunc;
-            _genDiscardFileDelegateFunc = genDiscardFileDelegateFunc;
+            _genWritePartToFileDelegateFunc = genWriteMultipartFileDelegateFunc;
+            _genGetTextDataDelegateFunc = genGetTextDataDelegateFunc;
+            _genGetBinaryDataDelegateFunc = genGetBinaryDataDelegateFunc;
+            _genDiscardPartDelegateFunc = genDiscardPartDelegateFunc;
             _encoding = encoding;
         }
 
-        public Data.BinaryData DecodePart(byte[] content, string contentType)
+        public BufferedData DecodePart(byte[] content, string contentType)
         {
-            return new Data.BinaryData
+            return new BufferedData
             {
                 ContentType = contentType,
-                Data = content
+                Bytes = content,
+                IsBinary = true
             };
         }
 
-        public Data.BufferedData DecodePart(string content, string contentType)
+        public BufferedData DecodePart(string content, string contentType)
         {
-            return new Data.BufferedData
+            return new BufferedData
             {
                 ContentType = contentType,
-                Text = content
+                Text = content,
+                IsBinary = false
             };
         }
 
@@ -51,9 +57,10 @@ namespace HttpMultipartParser.Decoding
             {
                 ContentType = contentType,
                 IsBinary = ContentTypes.IsBinary(contentType),
-                ToFile = _genWriteMultipartFileDelegateFunc(content),
-                GetData = _genGetFileDataFunc(content),
-                Skip = _genDiscardFileDelegateFunc(content)
+                ToFile = _genWritePartToFileDelegateFunc(content),
+                GetTextData = _genGetTextDataDelegateFunc(content),
+                GetBinaryData = _genGetBinaryDataDelegateFunc(content),
+                Discard = _genDiscardPartDelegateFunc(content)
             };
         }
     }

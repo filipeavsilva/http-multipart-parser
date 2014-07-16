@@ -3,7 +3,7 @@ using System.IO;
 
 namespace HttpMultipartParser.Decoding {
 	internal interface IContentDecoder {
-		BinaryData DecodePart (byte[] content, string contentType);
+		BufferedData DecodePart (byte[] content, string contentType);
 
 		BufferedData DecodePart (string content, string contentType);
 
