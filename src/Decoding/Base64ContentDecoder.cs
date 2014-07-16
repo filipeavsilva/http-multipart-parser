@@ -36,7 +36,7 @@ namespace HttpMultipartParser.Decoding
         {
             bool isBinary = ContentTypes.IsBinary(contentType);
 
-            var data = new Data.BufferedData
+            var data = new BufferedData
             {
                 ContentType = contentType,
                 IsBinary = isBinary
@@ -47,6 +47,8 @@ namespace HttpMultipartParser.Decoding
                 data.Bytes = bytes;
             else
                 data.Text = _encoding.GetString(bytes);
+
+            return data;
         }
 
         public StreamedData DecodeAndStreamPart(BufferedStream content, string contentType)

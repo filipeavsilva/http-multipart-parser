@@ -95,157 +95,160 @@ namespace HttpMultipartParser {
 		/// The enumerable must be read to the end before all fields (not only files) are available
 		/// </returns>
 		public IEnumerable<StreamedData> Parse () {
-			if (this._finished) //It's done!
-				yield break;
-
-			if (_boundary == null) { //Nothing read yet
-				// The first line should contain the delimiter
-				string terminator;
-				_boundary = _stream.ReadLine(out terminator);
-				_terminatorBytes = _encoding.GetBytes (terminator); //Keep the line terminator bytes
-
-				if (_boundary.EndsWith("--")) { //For some reason the request came empty
-					this._finished = true; //Stop parsing
-					_stream.Close();
-					yield break;
-				}
-
-				_boundaryBytes = _encoding.GetBytes(/*terminator + */_boundary); //Include the line terminator in the boundary bytes,
-				// to avoid including it in any binary data
-			}
-
-			if (!string.IsNullOrEmpty(_boundary)) { //If it is null here, then something is wrong
-
-				string name = null;
-				string filename = null;
-				string contentType = null;
-				bool isBinary = false;
-				bool isFile = false;
-
-				if (_fileWaiting != null) { //There is a streamed file waiting. Let's save it.
-					if (_fileWaiting.IsBinary) {
-						Fields.Add(_fileWaiting.Name, new BinaryData {
-							ContentType = _fileWaiting.ContentType,
-							Name = _fileWaiting.Name,
-							FileName = _fileWaiting.FileName,
-							Data = (byte[])_fileWaiting.GetData()
-						});
-					} else {
-						Fields.Add(_fileWaiting.Name, new BufferedData {
-							ContentType = _fileWaiting.ContentType,
-							Name = _fileWaiting.Name,
-							FileName = _fileWaiting.FileName,
-							Text = (string)_fileWaiting.GetData()
-						});
-					}
-
-					_fileWaiting = null; //There isn't one anymore...
-				}
-
-				string line = _stream.ReadLine();
-				while (!this._finished && line != null) {
-					if (line.StartsWith("Content-Disposition")) { //Field name and data name
-						Regex nameRe = new Regex(@"name=""(.*?)""");
-						Match nameMatch = nameRe.Match(line);
-						if (nameMatch.Success) {
-							name = nameMatch.Groups[1].Value;
-						}
-
-						Regex fileNameRe = new Regex(@"filename=""(.*?)""");
-						Match fileNameMatch = fileNameRe.Match(line);
-						if (fileNameMatch.Success) {
-							filename = fileNameMatch.Groups[1].Value;
-							isFile = true;
-						}
-
-					} else if (line.StartsWith("Content-Type")) { //File type
-						contentType = line.Remove(0, 14).Trim(); //Removes 'Content-Type: '(14 chars) (and trims just in case)
-						isBinary = ContentTypes.IsBinary(contentType); //Checks if it is binary data
-
-					} else if (line == string.Empty) { //Data begins
-						if (isBinary) { //Binary data, always file
-							if (this._parseType == EFileHandlingType.ALL_BUFFERED ||
-									this._parseType == EFileHandlingType.STREAMED_TEXT) { //Buffered file
-
-								Fields.Add(name, new BinaryData {
-									ContentType = contentType ?? "application/octet-stream",
-									Name = name,
-									FileName = filename,
-									Data = ReadBinaryFile()
-								});
-
-							} else { //Stream it
-								StreamedData file = new StreamedData {
-									Name = name,
-									ContentType = contentType ?? "application/octet-stream",
-									IsBinary = true,
-									FileName = filename,
-
-									ToFile = WriteBinaryStreamToFile,
-									Skip = DiscardBinaryFile,
-									GetData = ReadBinaryFile
-								};
-
-								_fileWaiting = file;
-								yield return file;
-								isFile = false;
-							}
-
-						} else { //Text data
-							if (isFile &&
-									(this._parseType == EFileHandlingType.ALL_STREAMED ||
-									this._parseType == EFileHandlingType.STREAMED_TEXT)) { //Stream it
-								StreamedData file = new StreamedData {
-									Name = name,
-									ContentType = contentType ?? "text/plain",
-									IsBinary = false,
-									FileName = filename,
-
-									ToFile = WriteTextStreamToFile,
-									Skip = DiscardTextFile,
-									GetData = ReadTextFile
-								};
-
-								_fileWaiting = file;
-								yield return file;
-								isFile = false;
-
-							} else { //Non-file or buffered file
-
-								if (filename == null) {
-									Fields.Add(name, new BufferedData {
-										ContentType = contentType ?? "text/plain",
-										Name = name,
-										Text = ReadTextFile(),
-									});
-								} else {
-									Fields.Add(name, new BufferedData {
-										ContentType = contentType ?? "text/plain",
-										Name = name,
-										FileName = filename,
-										Text = ReadTextFile()
-									});
-								}
-
-							}
-						}
-						//reset stuff
-						name = null;
-						filename = null;
-						contentType = null;
-						isBinary = false;
-						isFile = false;
-					}
-
-					//Keep on readin'
-					line = _stream.ReadLine();
-				}
-
-				yield break; //FINISHED!
-			} else {
-				//Should it be an ArgumentException?
-				throw new ArgumentException("Stream is not a well-formed multipart string");
-			}
+            /*REMOVE AFTER UNCOMMENTING*/
+            return new List<StreamedData>();
+            /*REMOVE AFTER UNCOMMENTING*/
+//			if (this._finished) //It's done!
+//				yield break;
+//
+//			if (_boundary == null) { //Nothing read yet
+//				// The first line should contain the delimiter
+//				string terminator;
+//				_boundary = _stream.ReadLine(out terminator);
+//				_terminatorBytes = _encoding.GetBytes (terminator); //Keep the line terminator bytes
+//
+//				if (_boundary.EndsWith("--")) { //For some reason the request came empty
+//					this._finished = true; //Stop parsing
+//					_stream.Close();
+//					yield break;
+//				}
+//
+//				_boundaryBytes = _encoding.GetBytes(/*terminator + */_boundary); //Include the line terminator in the boundary bytes,
+//				// to avoid including it in any binary data
+//			}
+//
+//			if (!string.IsNullOrEmpty(_boundary)) { //If it is null here, then something is wrong
+//
+//				string name = null;
+//				string filename = null;
+//				string contentType = null;
+//				bool isBinary = false;
+//				bool isFile = false;
+//
+//				if (_fileWaiting != null) { //There is a streamed file waiting. Let's save it.
+//					if (_fileWaiting.IsBinary) {
+//						Fields.Add(_fileWaiting.Name, new BinaryData {
+//							ContentType = _fileWaiting.ContentType,
+//							Name = _fileWaiting.Name,
+//							FileName = _fileWaiting.FileName,
+//							Data = (byte[])_fileWaiting.GetData()
+//						});
+//					} else {
+//						Fields.Add(_fileWaiting.Name, new BufferedData {
+//							ContentType = _fileWaiting.ContentType,
+//							Name = _fileWaiting.Name,
+//							FileName = _fileWaiting.FileName,
+//							Text = (string)_fileWaiting.GetData()
+//						});
+//					}
+//
+//					_fileWaiting = null; //There isn't one anymore...
+//				}
+//
+//				string line = _stream.ReadLine();
+//				while (!this._finished && line != null) {
+//					if (line.StartsWith("Content-Disposition")) { //Field name and data name
+//						Regex nameRe = new Regex(@"name=""(.*?)""");
+//						Match nameMatch = nameRe.Match(line);
+//						if (nameMatch.Success) {
+//							name = nameMatch.Groups[1].Value;
+//						}
+//
+//						Regex fileNameRe = new Regex(@"filename=""(.*?)""");
+//						Match fileNameMatch = fileNameRe.Match(line);
+//						if (fileNameMatch.Success) {
+//							filename = fileNameMatch.Groups[1].Value;
+//							isFile = true;
+//						}
+//
+//					} else if (line.StartsWith("Content-Type")) { //File type
+//						contentType = line.Remove(0, 14).Trim(); //Removes 'Content-Type: '(14 chars) (and trims just in case)
+//						isBinary = ContentTypes.IsBinary(contentType); //Checks if it is binary data
+//
+//					} else if (line == string.Empty) { //Data begins
+//						if (isBinary) { //Binary data, always file
+//							if (this._parseType == EFileHandlingType.ALL_BUFFERED ||
+//									this._parseType == EFileHandlingType.STREAMED_TEXT) { //Buffered file
+//
+//								Fields.Add(name, new BinaryData {
+//									ContentType = contentType ?? "application/octet-stream",
+//									Name = name,
+//									FileName = filename,
+//									Data = ReadBinaryFile()
+//								});
+//
+//							} else { //Stream it
+//								StreamedData file = new StreamedData {
+//									Name = name,
+//									ContentType = contentType ?? "application/octet-stream",
+//									IsBinary = true,
+//									FileName = filename,
+//
+//									ToFile = WriteBinaryStreamToFile,
+//									Skip = DiscardBinaryFile,
+//									GetData = ReadBinaryFile
+//								};
+//
+//								_fileWaiting = file;
+//								yield return file;
+//								isFile = false;
+//							}
+//
+//						} else { //Text data
+//							if (isFile &&
+//									(this._parseType == EFileHandlingType.ALL_STREAMED ||
+//									this._parseType == EFileHandlingType.STREAMED_TEXT)) { //Stream it
+//								StreamedData file = new StreamedData {
+//									Name = name,
+//									ContentType = contentType ?? "text/plain",
+//									IsBinary = false,
+//									FileName = filename,
+//
+//									ToFile = WriteTextStreamToFile,
+//									Skip = DiscardTextFile,
+//									GetData = ReadTextFile
+//								};
+//
+//								_fileWaiting = file;
+//								yield return file;
+//								isFile = false;
+//
+//							} else { //Non-file or buffered file
+//
+//								if (filename == null) {
+//									Fields.Add(name, new BufferedData {
+//										ContentType = contentType ?? "text/plain",
+//										Name = name,
+//										Text = ReadTextFile(),
+//									});
+//								} else {
+//									Fields.Add(name, new BufferedData {
+//										ContentType = contentType ?? "text/plain",
+//										Name = name,
+//										FileName = filename,
+//										Text = ReadTextFile()
+//									});
+//								}
+//
+//							}
+//						}
+//						//reset stuff
+//						name = null;
+//						filename = null;
+//						contentType = null;
+//						isBinary = false;
+//						isFile = false;
+//					}
+//
+//					//Keep on readin'
+//					line = _stream.ReadLine();
+//				}
+//
+//				yield break; //FINISHED!
+//			} else {
+//				//Should it be an ArgumentException?
+//				throw new ArgumentException("Stream is not a well-formed multipart string");
+//			}
 		}
 
 		/// <summary>
