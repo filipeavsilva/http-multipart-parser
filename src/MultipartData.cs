@@ -25,6 +25,11 @@ namespace HttpTools.Util {
         public string ContentType { get; set; }
 
         /// <summary>
+        /// The part's content transfer encoding (e.g. "Base64" or "8bit")
+        /// </summary>
+        public string ContentTransferEncoding { get; set; }
+
+        /// <summary>
         /// True if the part has a binary type, false otherwise
         /// </summary>
         public bool IsBinary { get; set; }
