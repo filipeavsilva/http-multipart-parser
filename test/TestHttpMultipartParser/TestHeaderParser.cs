@@ -107,6 +107,7 @@ namespace TestHttpMultipartParser
             var parsed = new HeaderParser().Parse(new HttpMultipartParser.BufferedStream(stream));
 
             var parameters = parsed["X-Custom-Header"].Parameters;
+
             parameters.Count.Should().Be(1);
             parameters["custom-prop1"].Should().Be("xpto");
         }
