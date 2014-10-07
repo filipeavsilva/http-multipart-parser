@@ -388,13 +388,14 @@ namespace HttpTools.Util { //Feel free to change this if needed
 			if (!Directory.Exists(dir))
 				Directory.CreateDirectory(dir);
 
-			FileStream file = File.Open(filePath, FileMode.Create);
+		    using (var file = File.Open(filePath, FileMode.Create))
+		    {
+                long numBytes = BinaryDataToStream(file);
 
-			long numBytes = BinaryDataToStream(file);
-
-			file.SetLength(numBytes); //Cut the file to size
-			file.Flush();
-			file.Close();
+                file.SetLength(numBytes); //Cut the file to size
+                file.Flush();
+                file.Close();
+            }
 		}
 
 		//Reads a binary file part into a byte array
