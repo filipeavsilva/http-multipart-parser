@@ -1,4 +1,12 @@
-﻿#HTTP Multipart parser
+﻿#[Update]
+
+Folks, I finally accepted that I don't have the time or drive to keep working on
+this anymore.
+So, if anyone wants to take charge of this project, please [contact
+me](mailto:%66%69%6c%69%70%65%2e%61%76%2e%73%69%6c%76%61%40%67%6d%61%69%6c%2e%63%6f%6d?subject=Http%20Multipart%20Parser
+		"contact me") so I can transfer the ownership.
+
+#HTTP Multipart parser
 
 A parser for  HTTP Multipart requests.
 
